@@ -1,0 +1,18 @@
+{
+  "name": "hs-codes-scraper",
+  "version": "1.0.0",
+  "author": "Pengyuan Zhao (赵鹏远)",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "json2csv": "^4.3.1",
+    "lodash.truncate": "^4.4.2",
+    "nodemon": "^1.18.6",
+    "puppeteer": "^1.10.0",
+    "winston": "^3.1.0"
+  }
+}
