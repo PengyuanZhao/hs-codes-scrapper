@@ -5,8 +5,10 @@ const logger = require('./logger');
 
 logger.add(new winston.transports.File({ filename: 'logs/hs-codes-scraper.log' }));
 
-const workbook = XLSX.readFile('file.xlsx');
+const workbook = XLSX.readFile('file2.xlsx');
 const startIndex = process.argv[2] || 2;
+
+console.log(startIndex);
 
 const firstSheetName = workbook.SheetNames[0];
 const worksheet = workbook.Sheets[firstSheetName];
@@ -34,7 +36,6 @@ async function scraper() {
   });
 
   const url = `https://www.foreign-trade.com/reference/hscode.htm`;
-  const results = [];
 
   const response = await page.goto(url, { timeout: 0 });
 
@@ -43,7 +44,7 @@ async function scraper() {
     return;
   }
 
-  for (let i = startIndex; i < workbook.Strings.Count; i++) {
+  for (let i = startIndex; i < 3; i++) {
     const leafCategoryId = worksheet[`A${i}`].v;
     const leafCategoryName = worksheet[`B${i}`].v;
     const entry = [leafCategoryId, leafCategoryName];
@@ -84,30 +85,24 @@ async function scraper() {
       entry.push(name);
     });
 
-    results.push(entry);
+    const wb = XLSX.readFile('results2.xlsx');
+    const ws = wb.Sheets[wb.SheetNames[0]];
+
+    console.log(entry);
+
+    XLSX.utils.sheet_add_aoa(ws, [entry], { origin: -1 });
+    // XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, 'results2.xlsx');
   }
 
   await browser.close();
 
-  logger.info(`[Finished Scraping] Processed ${results.length} entries`);
-
-  return results;
+  logger.info('[Finished Scraping]');
 }
 
 (async () => {
   try {
-    const results = await scraper();
-    // filename = `./results/百度新闻-${keyword}.csv`;
-    // fs.writeFileSync(filename, csv);
-
-    const workbook = XLSX.utils.book_new();
-    const workbook = XLSX.readFile(filename, { type: 'array' });
-    const worksheet = XLSX.utils.aoa_to_sheet(results);
-
-    XLSX.utils.sheet_add_aoa(worksheet);
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    XLSX.writeFile(workbook, 'results.xlsx');
+    await scraper();
   } catch (err) {
     console.log('\x1b[31m%s\x1b[0m', err);
   }
