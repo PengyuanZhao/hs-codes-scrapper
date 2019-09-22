@@ -71,7 +71,6 @@ async function scraper() {
       continue;
     }
 
-    await page.screenshot({ path: `./screenshots/1.png`, fullPage: true });
     const { keyword, codeNames } = await page.evaluate(() => {
       let keyword = '';
       const codeNames = Array.from(
